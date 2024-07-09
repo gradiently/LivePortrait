@@ -11,7 +11,16 @@ from .util import SameBlock2d, DownBlock2d, ResBlock3d
 
 class AppearanceFeatureExtractor(nn.Module):
 
-    def __init__(self, image_channel, block_expansion, num_down_blocks, max_features, reshape_channel, reshape_depth, num_resblocks):
+    def __init__(
+        self,
+        image_channel,
+        block_expansion,
+        num_down_blocks,
+        max_features,
+        reshape_channel,
+        reshape_depth,
+        num_resblocks,
+    ):
         super(AppearanceFeatureExtractor, self).__init__()
         self.image_channel = image_channel
         self.block_expansion = block_expansion
@@ -24,7 +33,7 @@ class AppearanceFeatureExtractor(nn.Module):
 
         down_blocks = []
         for i in range(num_down_blocks):
-            in_features = min(max_features, block_expansion * (2 ** i))
+            in_features = min(max_features, block_expansion * (2**i))
             out_features = min(max_features, block_expansion * (2 ** (i + 1)))
             down_blocks.append(DownBlock2d(in_features, out_features, kernel_size=(3, 3), padding=(1, 1)))
         self.down_blocks = nn.ModuleList(down_blocks)
@@ -33,7 +42,7 @@ class AppearanceFeatureExtractor(nn.Module):
 
         self.resblocks_3d = torch.nn.Sequential()
         for i in range(num_resblocks):
-            self.resblocks_3d.add_module('3dr' + str(i), ResBlock3d(reshape_channel, kernel_size=3, padding=1))
+            self.resblocks_3d.add_module("3dr" + str(i), ResBlock3d(reshape_channel, kernel_size=3, padding=1))
 
     def forward(self, source_image):
         out = self.first(source_image)  # Bx3x256x256 -> Bx64x256x256
